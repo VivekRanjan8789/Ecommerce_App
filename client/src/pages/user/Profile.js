@@ -3,9 +3,10 @@ import { AuthContext } from "../../context/Auth";
 import Layout from "../../components/layout/Layout";
 import UserMenu from "../../components/layout/UserMenu";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const Profile = () => {
-    const { Auth }  = useContext(AuthContext);
+    const { Auth, setAuth }  = useContext(AuthContext);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -20,20 +21,30 @@ const Profile = () => {
         setPhone(phone)
         setAddress(address)
 
-  },[])
+  },[Auth?.user])
   
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   //  making http request to server side
-    // try {
-    //    const response =await axios.post(`${process.env.REACT_APP_API}/auth/register`, {
-    //        name, password, email, phone, address, answer
-    //    })
-    //    console.log(response); 
-    // } catch (error) {
-    //    console.log(error);        
-    // }           
+   // making http request to server side for update profile
+    try {
+       const { data } =await axios.put(`${process.env.REACT_APP_API}/auth/profile`, {
+           name, password, email, phone, address
+       })
+       if(data?.error){
+         toast.error(data?.error)
+       }else{
+        setAuth({...Auth, user: data?.updatedUser})
+        let ls = localStorage.getItem('auth');
+        ls = JSON.parse(ls)
+        ls.user = data?.updatedUser
+        localStorage.setItem('auth', JSON.stringify(ls));
+        toast.success("profile updated successfully")
+       }
+    } catch (error) {
+       console.log(error); 
+       toast.error("something went wrong while updating")       
+    }           
 }
 
   return (
@@ -58,7 +69,6 @@ const Profile = () => {
                     onChange={(e) => {
                       setName(e.target.value);
                     }}
-                    required
                   />
                 </div>
 
@@ -72,7 +82,6 @@ const Profile = () => {
                     onChange={(e) => {
                       setEmail(e.target.value);
                     }}
-                    required
                     disabled
                   />
                 </div>
@@ -87,7 +96,6 @@ const Profile = () => {
                     onChange={(e) => {
                       setPassword(e.target.value);
                     }}
-                    required
                   />
                 </div>
 
@@ -101,7 +109,6 @@ const Profile = () => {
                     onChange={(e) => {
                       setPhone(e.target.value);
                     }}
-                    required
                   />
                 </div>
 
@@ -115,12 +122,11 @@ const Profile = () => {
                     onChange={(e) => {
                       setAddress(e.target.value);
                     }}
-                    required
                   />
                 </div>
 
                 <button type="submit" className="btn btn-primary">
-                  Register
+                  Update
                 </button>
               </form>
             </div>

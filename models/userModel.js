@@ -15,12 +15,12 @@ const userSchema =new mongoose.Schema({
           require: true,
           unique: true
      },
-     Phone: {
+     phone: {
           type: String,
           require: true
      },
      address: {
-          type: String,
+          type: {},
           require: true
      },
      answer: {

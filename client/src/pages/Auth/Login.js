@@ -28,9 +28,6 @@ const Login = () => {
            const response =await axios.post(`${process.env.REACT_APP_API}/auth/login`, {
                 password, email
            })
-           console.log(response);
-           
-           
            if(response.data.success){
                toast.success(response.data.message)              
                
