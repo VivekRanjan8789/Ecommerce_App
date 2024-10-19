@@ -32,4 +32,6 @@ router.get('/auth-admin', requireSignIn, isAdmin, (req, res)=>{
 // update profiile
 router.put('/profile', requireSignIn, updateProfileController)
 
+
+
 export default router;
