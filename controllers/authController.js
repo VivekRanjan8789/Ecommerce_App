@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import 'dotenv/config'
 
 import { hashPassword, verifyPassword } from "../helper/authHelper.js";
+import Order from "../models/orderModel.js";
 
 export const registerController = async (req, res) =>{
       try {        
@@ -217,4 +218,26 @@ export const updateProfileController = async(req, res) => {
       error
     })
   }
+}
+
+// orders
+export const getOrderController = async (req, res) => {
+    try {
+      const orders = await Order.find({buyer: req.user.id}).populate('products','-photo').populate("buyer","name");
+      return res.status(200).send({
+        success: true,
+        message: "order fetched successfully",
+        orders
+      })
+        
+      
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        success: false,
+        message: "error while updating profile",
+        error
+      })
+      
+    }
 }
