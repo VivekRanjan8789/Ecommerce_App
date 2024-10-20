@@ -78,7 +78,6 @@ export const loginController = async (req, res) => {
             // }
           // checking user in db or not
           const user = await User.findOne({email});
-          console.log(user);
           
           if(!user){
             console.log("email is not resgistered");           
@@ -220,7 +219,7 @@ export const updateProfileController = async(req, res) => {
   }
 }
 
-// orders
+// get orders for userthat they ordered by user_id
 export const getOrderController = async (req, res) => {
     try {
       const orders = await Order.find({buyer: req.user.id}).populate('products','-photo').populate("buyer","name");
@@ -239,5 +238,52 @@ export const getOrderController = async (req, res) => {
         error
       })
       
+    }
+}
+
+
+// all orders for admin
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find().populate('products','-photo').populate("buyer","name").sort({createdAt: -1});
+    return res.status(200).send({
+      success: true,
+      message: "order fetched successfully",
+      orders
+    })
+      
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      success: false,
+      message: "error while fetching all orders",
+      error
+    })
+    
+  }
+}
+
+// order status
+export const orderStatusController = async (req, res) =>{
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      console.log("status  is: ", id, status);
+      
+      const response = await Order.findByIdAndUpdate(id, {
+         status
+      }, {new: true})
+      return res.status(200).send({
+        success: true,
+        message: "status of order updated successfully",
+        response
+      })
+    } catch (error) {
+       return res.status(500).send({
+         success: false,
+         message: "error while updating status of order",
+      error
+       })
     }
 }
