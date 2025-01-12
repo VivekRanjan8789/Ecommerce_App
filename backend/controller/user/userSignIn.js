@@ -52,7 +52,7 @@ export default async function userSignInController(req, res) {
     } catch (err) {
         // Handle error
         res.json({
-            message: err.message || err,
+            message:  err,
             error: true,
             success: false,
         });
